@@ -37,6 +37,5 @@ set background=dark
 
 " Quality of life
 set clipboard=unnamedplus
-set undofile
 set splitbelow
 set splitright

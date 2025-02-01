@@ -5,11 +5,13 @@ command -v vim >/dev/null 2>&1 ||
 
 # Check if a .vimrc file exists
 file=".vimrc"
-if [[ -f "$HOME/$file" && -s "$HOME/$file" ]]; then
-    echo Non-empty $file found in "$HOME" -- Creating a backup of it.
+if [[ -f $HOME/$file && -s $HOME/$file ]]; then
+    echo Non-empty $file found in $HOME -- Creating a backup of it.
     mv $HOME/$file $HOME/.vimrc_backup
 fi
 
-# Move .vimrc file from this directory to the correct directory
-mv $file $HOME/$file
-echo Moved .vimrc file from this directory to "$HOME"
+# Copy this .vimrc file to the target directory. For any changes just change the .vimrc file in this git repo
+# then run this file to copy the new version to the target directory.
+cp $file $HOME/$file
+echo Copied $file to $HOME.
+
