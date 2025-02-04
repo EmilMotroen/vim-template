@@ -32,9 +32,14 @@ nmap <F2> :w<CR>
 imap <F2> <ESC>:w<CR>i
 
 " Appearance
-syntax enable
 set background=dark
 colorscheme cs
+syntax on
+
+" Syntax highlighting
+autocmd BufNewFile,BufRead *.cpp set filetype=cpp"
+autocmd BufNewFile,BufRead *.cpp set filetype=cpp"
+
 
 " Quality of life
 set clipboard=unnamedplus

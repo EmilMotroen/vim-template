@@ -4,9 +4,10 @@ command -v vim >/dev/null 2>&1 ||
     { echo >&2 "Vim is required, but it's not installed. Aborting."; exit 1; }
 
 help() {
-    echo "Usage: $0 {vimrc|cs}"
+    echo "Usage: $0 {vimrc|cs|syntax=LANG}"
     echo "vimrc  - install .vimrc file"
     echo "cs     - install colorscheme"
+    echo "syntax - Install syntax highlighting for specified language (e.g., syntax=cpp)"
     echo "none   - No operation"
     exit 0
 }
@@ -46,19 +47,59 @@ cs() {
     echo "Copied $CS to $COLORSCHEME_DEST."
 }
 
+syntax() {
+    local DIR="$HOME/.vim/syntax"
+    # Check if the correct directory exists
+    if [ ! -d $DIR ]; then
+        echo "$DIR missing. Adding it."
+        mkdir $DIR
+    fi
+
+    local lang=$1
+    case $lang in
+        anb)
+            cp syntax/anb.vim $DIR/anb.vim
+            echo "AnB syntax highlighting installed."
+            sed -i '/" Syntax highlighting/a autocmd BufNewFile,BufRead *.AnB set filetype=AnB"' .vimrc
+            ;;
+        cpp)
+            cp syntax/cpp.vim $DIR/cpp.vim
+            echo "C++ syntax highlighting installed."
+            sed -i '/" Syntax highlighting/a autocmd BufNewFile,BufRead *.cpp set filetype=cpp"' .vimrc
+            ;;
+        *)
+            echo "Unsupported syntax: $lang"
+            exit 1
+            ;;
+    esac
+
+    echo "Added autocmd for $lang to .vimrc. Update .vimrc file."
+    vimrc
+}
+
 OPERATION=${1:-None} # If no argument is provided default to None and quit.
 
 # Convert input to lowercase
 OPERATION=$(echo "$OPERATION" | tr '[:upper:]' '[:lower:]')
 
+# Check if operation includes a syntax argument
+if [[ $OPERATION == syntax=* ]]; then
+    SYNTAX_LANG=${OPERATION#syntax=}
+    OPERATION="syntax"
+fi
+
 case $OPERATION in
     vimrc)
-        echo "Install .vimrc file."
+        echo "Installing .vimrc file."
         vimrc
         ;;
     cs)
-        echo "Install colorscheme."
+        echo "Installing colorscheme."
         cs
+        ;;
+    syntax)
+        echo "Installing syntax highlighting for $SYNTAX_LANG"
+        syntax "$SYNTAX_LANG"
         ;;
     help)
         help
