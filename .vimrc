@@ -34,6 +34,7 @@ imap <F2> <ESC>:w<CR>i
 " Appearance
 syntax enable
 set background=dark
+colorscheme cs
 
 " Quality of life
 set clipboard=unnamedplus

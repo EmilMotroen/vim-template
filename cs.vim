@@ -1,4 +1,10 @@
 " ~/.vim/colors/cs.vim
-highlight Normal guifg=#ffffff guibg=#000000
-highlight Comment guifg=#00ffff
-
+highlight Normal ctermbg=None ctermfg=white
+highlight Comment ctermfg=cyan
+highlight Constant ctermfg=magenta
+highlight Identifier ctermfg=yellow
+highlight Statement ctermfg=green
+highlight PreProc ctermfg=blue
+highlight Type ctermfg=red
+highlight Special ctermfg=white
+highlight Underlined ctermfg=cyan
