@@ -4,15 +4,19 @@ command -v vim >/dev/null 2>&1 ||
     { echo >&2 "Vim is required, but it's not installed. Aborting."; exit 1; }
 
 help() {
-    echo "Usage: $0 {vimrc|cs|syntax=LANG}"
+    echo "Usage: $0 {vimrc|md}"
     echo "vimrc  - install .vimrc file"
-    echo "cs     - install colorscheme"
-    echo "syntax - Install syntax highlighting for specified language (e.g., syntax=cpp)"
+    echo "md     - install Markdown CSS for Markdown-preview in Vim"
     echo "none   - No operation"
     exit 0
 }
 
 vimrc() {
+    #if [ ! check_connection ]; then
+    #    echo "ERROR: no internet connection. An internet connection is required to install plugins. Exiting..."
+    #    exit 1
+    #fi
+
     # Check if a .vimrc file exists
     local file=".vimrc"
     if [[ -f $HOME/$file && -s $HOME/$file ]]; then
@@ -20,61 +24,66 @@ vimrc() {
         mv $HOME/$file $HOME/.vimrc_backup
     fi
 
+    vim_dir
+
     # Copy this .vimrc file to the target directory. For any changes just change the .vimrc file in this git repo
-    # then run this file to copy the new version to the target directory.
+    # then run this script to copy the new version to the target directory.
     cp $file $HOME/$file
-    echo "Copied $file to $HOME."
+    echo "Copied main $file to $HOME."
+
+    copy_subfiles
+    
+    echo "Installing plugins..."
+    vim +PluginInstall +qall
+    echo "Done installing plugins. It is recommended to open a file with Vim to check if it was successful."
 }
 
-cs() {
-    local COLORSCHEME_DEST="$HOME/.vim/colors"
-    local CS="cs.vim"
-    
-    # Check if the correct directory exists
-    if [ ! -d $COLORSCHEME_DEST ]; then
-        echo "$COLORSCHEME_DEST missing, adding it."
-        mkdir $COLORSCHEME_DEST
-    fi
-    
-    # Check if a colorscheme file already exists
-    if [[ -f $COLORSCHEME_DEST/$CS && -s $COLORSCHEME_DEST/$CS  ]]; then
-        echo "Non-empty $CS found in $COLORSCHEME_DEST -- Creating a backup of it."
-        mv $COLORSCHEME_DEST/$CS $COLORSCHEME_DEST/cs_backup.vim
-    fi
-
-    # Copy the cs file to the target directory
-    cp $CS $COLORSCHEME_DEST/$CS
-    echo "Copied $CS to $COLORSCHEME_DEST."
+copy_subfiles() {
+    echo "Copy vim subfiles:"
+    files=`ls ./.vim/*.vim`
+    for file in $files; do
+        echo $'\t'$file
+    done
+    cp ./.vim/* $HOME/.vim/ 
+    echo "Done copying additional vim files."
 }
 
-syntax() {
-    local DIR="$HOME/.vim/syntax"
-    # Check if the correct directory exists
-    if [ ! -d $DIR ]; then
-        echo "$DIR missing. Adding it."
-        mkdir $DIR
+check_connection() {
+    # Check using the network wrapper
+    if : >/dev/tcp/8.8.8.8/53; then
+        true
+    fi
+    false
+}
+
+vim_dir() {
+    # Check if a .vim subdirectory exists
+    local path="$HOME/.vim/"
+    
+    if [ -d "$path" ]; then
+        echo "$path directory already exists."
+    else
+        # Create a .vim directory for subfiles
+        mkdir -p $path 
+        echo "Created $path directory."
+   fi
+}
+
+md() {
+    local file="markdown.css"
+    local path="$HOME/.vim/css"
+
+    vim_dir 
+    # Make a css directory if there isn't one
+    mkdir -p $path 
+
+    if [[ -f $path/$file && -s $path/$file ]]; then
+        echo "Non-empty $file found in $path -- Creating a backup of it."
+        mv $path/$file $path/markdown_backup.css
     fi
 
-    local lang=$1
-    case $lang in
-        anb)
-            cp syntax/anb.vim $DIR/anb.vim
-            echo "AnB syntax highlighting installed."
-            sed -i '/" Syntax highlighting/a autocmd BufNewFile,BufRead *.AnB set filetype=AnB"' .vimrc
-            ;;
-        cpp)
-            cp syntax/cpp.vim $DIR/cpp.vim
-            echo "C++ syntax highlighting installed."
-            sed -i '/" Syntax highlighting/a autocmd BufNewFile,BufRead *.cpp set filetype=cpp"' .vimrc
-            ;;
-        *)
-            echo "Unsupported syntax: $lang"
-            exit 1
-            ;;
-    esac
-
-    echo "Added autocmd for $lang to .vimrc. Update .vimrc file."
-    vimrc
+    cp $file $path/$file
+    echo "Copied $file to $path."
 }
 
 OPERATION=${1:-None} # If no argument is provided default to None and quit.
@@ -82,34 +91,20 @@ OPERATION=${1:-None} # If no argument is provided default to None and quit.
 # Convert input to lowercase
 OPERATION=$(echo "$OPERATION" | tr '[:upper:]' '[:lower:]')
 
-# Check if operation includes a syntax argument
-if [[ $OPERATION == syntax=* ]]; then
-    SYNTAX_LANG=${OPERATION#syntax=}
-    OPERATION="syntax"
-fi
-
 case $OPERATION in
-    vimrc)
+    vimrc|.vimrc)
         echo "Installing .vimrc file."
         vimrc
         ;;
-    cs)
-        echo "Installing colorscheme."
-        cs
-        ;;
-    syntax)
-        echo "Installing syntax highlighting for $SYNTAX_LANG"
-        syntax "$SYNTAX_LANG"
+    md|markdown)
+        echo "Installing markdown.css"
+        md
         ;;
     help)
         help
         ;;
-    none)
-        echo "No argument given. Use './install.sh help' to see arguments."
-        exit 0
-        ;;
-    *)
-        echo "Invalid argument. Exiting."
+    none | *)
+        echo "Invalid argument provided. Use './install.sh help' to see arguments."
         exit 1
         ;;
 esac
