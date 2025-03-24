@@ -12,10 +12,10 @@ help() {
 }
 
 vimrc() {
-    #if [ ! check_connection ]; then
-    #    echo "ERROR: no internet connection. An internet connection is required to install plugins. Exiting..."
-    #    exit 1
-    #fi
+    if ! check_connection; then
+        echo "ERROR: no internet connection. An internet connection is required to install plugins. Exiting..."
+        exit 1
+    fi
 
     # Check if a .vimrc file exists
     local file=".vimrc"
@@ -50,10 +50,11 @@ copy_subfiles() {
 
 check_connection() {
     # Check using the network wrapper
-    if : >/dev/tcp/8.8.8.8/53; then
+    if ping -c 1 8.8.8.8 &>/dev/null; then
         true
+    else
+        false
     fi
-    false
 }
 
 vim_dir() {
