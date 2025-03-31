@@ -3,6 +3,12 @@
 command -v vim >/dev/null 2>&1 ||
     { echo >&2 "Vim is required, but it's not installed. Aborting."; exit 1; }
 
+VIMVERSION=$(vim --version | head -1 | cut -d ' ' -f 5)
+if [[ $VIMVERSION < 9.1 ]]; then
+    echo "The plugin YouCompleteMe requires the Vim version to be at least 9.1.0016. Update Vim to install. Exiting..."
+    exit 1
+fi
+
 help() {
     echo "Usage: $0 {vimrc|md}"
     echo "vimrc  - install .vimrc file"
