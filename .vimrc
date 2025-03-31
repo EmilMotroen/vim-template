@@ -62,6 +62,12 @@ Plugin 'plantuml/plantuml'
 call vundle#end()
 filetype plugin indent on
 
+" Set fold method and keep manual folds after closing and reopening a file
+set foldmethod=manual
+autocmd BufWinLeave * mkview 
+autocmd BufWinEnter * silent! loadview
+
+
 " Configure MarkdownPreview
 let g:mkdp_auto_start = 0
 let g:mkdp_auto_close = 1
@@ -87,8 +93,10 @@ imap <F8> <ESC>:w<CR>:MarkdownPreview<CR>
 source ~/.vim/vimtex.vim
 
 " Appearance
-set bg=dark 
-colo gruvbox 
+set bg=dark
+if filereadable(expand("$HOME/.vim/bundle/gruvbox/colors/gruvbox.vim"))
+    colo gruvbox
+endif
 
 " Configure lightline
 source ~/.vim/lightline.vim 
