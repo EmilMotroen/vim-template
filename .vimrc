@@ -21,6 +21,7 @@ set linebreak
 set wildmode=longest,list,full
 set wildmenu
 set cursorline
+set noshowmode
 
 " Add closing brackets
 inoremap " ""<left>
@@ -58,6 +59,7 @@ Plugin 'lervag/vimtex'
 Plugin 'morhetz/gruvbox'
 Plugin 'ap/vim-css-color'
 Plugin 'plantuml/plantuml'
+Plugin 'NLKNguyen/papercolor-theme'
 
 call vundle#end()
 filetype plugin indent on
@@ -67,39 +69,14 @@ set foldmethod=manual
 autocmd BufWinLeave * mkview 
 autocmd BufWinEnter * silent! loadview
 
-
 " Configure MarkdownPreview
-let g:mkdp_auto_start = 0
-let g:mkdp_auto_close = 1
-let g:mkdp_refresh_slow = 0
-let g:mkdp_command_for_global = 0
-let g:mkdp_open_to_the_world = 0
-let g:mkdp_open_ip = ''
-let g:mkdp_browser = ''
-let g:mkdp_echo_preview_url = 0
-let g:mkdp_brower_func = ''
-let g:mkdp_markdown_css = expand('~/.vim/css/markdown.css')
-let g:mkdp_highlight_css = '' 
-let g:mkdp_port = ''
-let g:mkdp_filetypes = ['markdown']
-let g:mkdp_theme = 'light'
-
-" MarkdownPreview mappings
-nmap <F8> :w<CR>:MarkdownPreview<CR>
-nmap <F9> :MarkdownPreviewStop<CR>
-imap <F8> <ESC>:w<CR>:MarkdownPreview<CR>
+source ~/.vim/markdownPreview.vim
 
 " Configure vimtex
 source ~/.vim/vimtex.vim
 
-" Appearance
-set bg=dark
-if filereadable(expand("$HOME/.vim/bundle/gruvbox/colors/gruvbox.vim"))
-    colo gruvbox
-endif
-
-" Configure lightline
-source ~/.vim/lightline.vim 
+" Appearance and Lightline
+source ~/.vim/lightline.vim
 
 " Quality of life
 set clipboard=unnamedplus

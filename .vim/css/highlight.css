@@ -1,0 +1,60 @@
+.code, .pre {
+    background-color: #2e2e2e;
+    color: #dcdcdc;
+    border-radius: 5px;
+    padding: 5px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.comment {
+    color: #757575;
+    font-style: italic;
+}
+
+.keyword {
+    color: #c792ea;
+}
+
+.string {
+    color: #a5e844;
+}
+
+.number {
+    color: #f78c6c;
+}
+
+.function {
+    color: #82aaff;
+}
+
+.variable {
+    color: #f07178;
+}
+
+.operator {
+    color: #89ddff;
+}
+
+.class-name {
+    color: #ffcb6b;
+}
+
+.method {
+    color: #82aaff;
+}
+
+.tag {
+    color: #f07178;
+}
+
+.attribute {
+    color: #c792ea;
+}
+
+.selector {
+    color: #ffcb6b;
+}
+
+.property {
+    color: #a5e844;
+}
